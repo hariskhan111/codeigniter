@@ -105,10 +105,37 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			?>
 			</table>
 		</h1>
+		<h1> Please wait for currency rate:</h1>
+		<h1 id="rate"></h1>
 	</div>
 
 	<p class="footer">Page rendered in <strong>{elapsed_time}</strong> seconds. <?php echo  (ENVIRONMENT === 'development') ?  'CodeIgniter Version <strong>' . CI_VERSION . '</strong>' : '' ?></p>
 </div>
+<script type="text/javascript">
+	var myHeaders = new Headers();
+	myHeaders.append("apikey", "8RgZZOhuIHXa96ugeB9cnlRxTWATZeNr");
 
+	var requestOptions = {
+	method: 'GET',
+	redirect: 'follow',
+	headers: myHeaders
+	};
+
+	const currencies = ['usd','ron']
+	currencies.forEach(currencyConversion)
+
+	function currencyConversion(currency, index){
+		fetch("https://api.apilayer.com/exchangerates_data/convert?to="+currency+"&from=eur&amount=1", requestOptions)
+			.then(response => response.text())
+			.then((response) => {
+				data = JSON.parse(response)
+
+				var str = "from " + data['query']['from'] + " to " + data['query']['to'] + " is " + data['info']['rate'] + "\n"
+				document.getElementById("rate").innerText += str;
+			})
+			.catch(error => console.log('error', error));
+	}
+	
+</script>
 </body>
 </html>
